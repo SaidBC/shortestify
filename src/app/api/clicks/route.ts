@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     `https://www.ipinfo.io/105.154.35.245?token=5a02c9e17dead4`
   );
   const data = response;
-
+  console.log(ip, data);
   const click = null;
   return Response.json({ success: true, data: click });
 }
