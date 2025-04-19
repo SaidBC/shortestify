@@ -43,6 +43,11 @@ export async function POST(req: NextRequest) {
     });
     return Response.json({ success: true, data: user });
   } catch (error) {
-    return Response.json({ success: false, error });
+    return Response.json({
+      success: false,
+      errors: {
+        request: ["Something went wrong"],
+      },
+    });
   }
 }

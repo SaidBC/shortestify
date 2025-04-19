@@ -47,7 +47,7 @@ model User {
   email         String        @unique
   emailVerified DateTime?
   sessions      Session[]
-  urls          Url[]
+  shortlinks    ShortLink[]
   balance       Decimal       @default(0)
   transactions  Transaction[]
   withdrawals   Withdrawal[]
@@ -66,33 +66,50 @@ model VerificationRequest {
   @@unique([identifier, token])
 }
 
-model Url {
-  id        String   @id @default(cuid())
-  url       String
-  shortSlug String   @unique @default(uuid())
-  ads       Boolean  @default(true)
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  clicks    Click[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum UrlType {
+  REDIRECT
+  UPLOAD
+}
+
+model ShortLink {
+  id           String        @id @default(cuid())
+  type         UrlType
+  redirectURL  RedirectLink? @relation(fields: [urlId], references: [id])
+  urlId        String?
+  uploadLink   UploadLink?   @relation(fields: [uploadLinkId], references: [id])
+  uploadLinkId String?
+  shortSlug    String        @unique @default(uuid())
+  ads          Boolean       @default(true)
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id])
+  clicks       Click[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model RedirectLink {
+  id         String      @id @default(cuid())
+  url        String
+  shortLinks ShortLink[]
 }
 
 model Click {
-  id          String   @id @default(cuid())
-  url         Url      @relation(fields: [shortSlug], references: [shortSlug])
+  id          String    @id @default(cuid())
+  shortLink   ShortLink @relation(fields: [shortSlug], references: [shortSlug])
   shortSlug   String
   ip          String
+  country     Country   @relation(fields: [countryCode], references: [code])
   countryCode String
-  amount      Decimal  @default(0)
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  amount      Decimal   @default(0)
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 enum TransactionType {
   WITHDRAW
-  CLICK
+  REDIRECT
+  UPLOAD
 }
 
 model Transaction {
@@ -117,4 +134,27 @@ model Withdrawal {
   userId    String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+}
+
+model UploadLink {
+  id        String      @id @default(cuid())
+  files     File[]
+  ShortLink ShortLink[]
+}
+
+model File {
+  id           String     @id @default(cuid())
+  mimetype     String
+  url          String     @unique
+  size         Int
+  uploadLink   UploadLink @relation(fields: [uploadLinkId], references: [id])
+  uploadLinkId String
+}
+
+model Country {
+  id     String  @id @default(cuid())
+  name   String
+  code   String  @unique
+  rate   Decimal
+  clicks Click[]
 }

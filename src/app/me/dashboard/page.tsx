@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ClicksDownloadsChart from "@/ui/me/dashboard/ClicksDownloadsChart";
-import { MostClickedCountry } from "@/ui/me/dashboard/MostClickedCountryChart";
+import ClicksDownloadsChartWrapper from "@/ui/me/dashboard/ClicksDownloadsChartWrapper";
+import MostClickedCountryChart from "@/ui/me/dashboard/MostClickedCountryChart";
 import TopCards from "@/ui/me/dashboard/TopCards";
 
 export default function Page() {
@@ -13,8 +14,8 @@ export default function Page() {
         <CardContent className="flex flex-col gap-4 ">
           <TopCards />
           <div className="grid grid-cols-1 @[64rem]:grid-cols-2 gap-4">
-            <ClicksDownloadsChart />
-            <MostClickedCountry />
+            <ClicksDownloadsChartWrapper />
+            <MostClickedCountryChart />
           </div>
         </CardContent>
       </Card>

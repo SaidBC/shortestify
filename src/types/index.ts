@@ -1,4 +1,4 @@
-import { Click, Url, User } from "@prisma/client";
+import { Click, Transaction, ShortLink, User } from "@prisma/client";
 
 export type WithdrawMethods = "USDT" | "PAYPAL" | "PAYEER" | "PERFECTMONEY";
 
@@ -8,7 +8,7 @@ interface IErrors {
 
 export interface createLinkPublicState {
   status: "PENDING" | "SUCCESS" | "FAILED";
-  data?: Url;
+  data?: ShortLink;
   errors?: IErrors;
 }
 
@@ -24,13 +24,15 @@ interface ResponseSuccess<Data> {
 
 export type IClickResponse = ResponseError<IErrors> | ResponseSuccess<Click>;
 
-export type IgetUrlsResponse = ResponseError<IErrors> | ResponseSuccess<Url[]>;
+export type IgetUrlsResponse =
+  | ResponseError<IErrors>
+  | ResponseSuccess<ShortLink[]>;
 
 export type ICheckClickResponse =
   | ResponseError<IErrors>
   | ResponseSuccess<
       Click & {
-        url: Url;
+        shortLink: ShortLink;
       }
     >;
 
@@ -54,4 +56,8 @@ export type IAuthFormState =
 
 export type IcreateUserApiResponse =
   | ResponseSuccess<Pick<User, "username" | "id">>
+  | ResponseError<IErrors>;
+
+export type ITransactionsChartResponse =
+  | ResponseSuccess<Transaction[]>
   | ResponseError<IErrors>;

@@ -11,7 +11,6 @@ import loginSchema from "./schemas/loginSchema";
 import prisma from "./prisma";
 import bcrypt from "bcryptjs";
 import { signIn, signOut } from "@/auth";
-import createUserSchema from "./schemas/createUserSchema";
 import signUpSchema from "./schemas/signUpSchema";
 import { revalidatePath } from "next/cache";
 

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const click = await prisma.click.create({
       data,
       include: {
-        url: true,
+        shortLink: true,
       },
     });
     return Response.json({ success: true, data: click });

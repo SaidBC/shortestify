@@ -36,14 +36,14 @@ export async function PATCH(request: Request) {
         completed: true,
       },
       include: {
-        url: true,
+        shortLink: true,
       },
     });
-    if (updatedClick.url.userId) {
+    if (updatedClick.shortLink.userId) {
       await axios.post(clientEnv.NEXT_PUBLIC_API_URL + "/transactions", {
         type: "CLICK",
         amount: updatedClick.amount,
-        userId: updatedClick.url.userId,
+        userId: updatedClick.shortLink.userId,
       });
     }
     return Response.json({ success: true, data: updatedClick });

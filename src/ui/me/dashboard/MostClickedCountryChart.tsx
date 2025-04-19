@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { LabelList, Pie, PieChart } from "recharts";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -18,31 +18,31 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 const chartData = [
-  { country: "usa", visitors: 275, fill: "blue" },
-  { country: "india", visitors: 200, fill: "yellow" },
-  { country: "morocco", visitors: 187, fill: "red" },
-  { country: "france", visitors: 173, fill: "purple" },
-  { country: "other", visitors: 90, fill: "skyblue" },
+  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 90, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
   visitors: {
     label: "Visitors",
   },
-  usa: {
-    label: "usa",
+  chrome: {
+    label: "Chrome",
     color: "hsl(var(--chart-1))",
   },
-  india: {
-    label: "india",
+  safari: {
+    label: "Safari",
     color: "hsl(var(--chart-2))",
   },
-  morocco: {
-    label: "morocco",
+  firefox: {
+    label: "Firefox",
     color: "hsl(var(--chart-3))",
   },
-  france: {
-    label: "france",
+  edge: {
+    label: "Edge",
     color: "hsl(var(--chart-4))",
   },
   other: {
@@ -51,38 +51,44 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function MostClickedCountry() {
+export default function MostClickedCountryChart() {
   return (
-    <Card className="flex flex-col bg-slate-900 border-slate-950">
-      <CardHeader className="items-center pb-0">
-        <CardTitle className="text-white">Most Clicked Country</CardTitle>
-        <CardDescription>January - June 2025</CardDescription>
+    <Card>
+      <CardHeader>
+        <CardTitle>Bar Chart - Mixed</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-84 [&_.recharts-text]:fill-background"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent nameKey="visitors" hideLabel />}
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 0,
+            }}
+          >
+            <YAxis
+              dataKey="browser"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) =>
+                chartConfig[value as keyof typeof chartConfig]?.label
+              }
             />
-            <Pie data={chartData} dataKey="visitors">
-              <LabelList
-                dataKey="country"
-                className="fill-background"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: keyof typeof chartConfig) =>
-                  chartConfig[value]?.label
-                }
-              />
-            </Pie>
-          </PieChart>
+            <XAxis dataKey="visitors" type="number" hide />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="visitors" layout="vertical" radius={5} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none text-white">
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">

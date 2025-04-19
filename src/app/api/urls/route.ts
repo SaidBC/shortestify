@@ -3,11 +3,17 @@ import createLinkSchema from "@/lib/schemas/createLinkSchema";
 import { NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 
-type PrismaCreateUrlData =
-  | (Prisma.Without<Prisma.UrlCreateInput, Prisma.UrlUncheckedCreateInput> &
-      Prisma.UrlUncheckedCreateInput)
-  | (Prisma.Without<Prisma.UrlUncheckedCreateInput, Prisma.UrlCreateInput> &
-      Prisma.UrlCreateInput);
+type PrismaCreateShortLinkData =
+  | (Prisma.Without<
+      Prisma.ShortLinkCreateInput,
+      Prisma.ShortLinkUncheckedCreateInput
+    > &
+      Prisma.ShortLinkUncheckedCreateInput)
+  | (Prisma.Without<
+      Prisma.ShortLinkUncheckedCreateInput,
+      Prisma.ShortLinkCreateInput
+    > &
+      Prisma.ShortLinkCreateInput);
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,13 +26,15 @@ export async function POST(req: NextRequest) {
       });
     }
     const url = validatedData.data.url;
-    const data: PrismaCreateUrlData = {
-      url,
+    const redirectedUrl = await prisma.redirectLink.create({
+      data: { url },
+    });
+    const data: PrismaCreateShortLinkData = {
+      urlId: redirectedUrl.id,
+      type: "REDIRECT",
     };
     if (validatedData.data.userId) data.userId = validatedData.data.userId;
-    const link = await prisma.url.create({
-      data,
-    });
+    const link = await prisma.shortLink.create({ data });
     return Response.json({ success: true, data: link });
   } catch (error) {
     return Response.json({
@@ -40,13 +48,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const where: Prisma.UrlWhereInput = {};
+    const where: Prisma.ShortLinkWhereInput = {};
     const searchParams = new URL(req.url).searchParams;
     const shortSlug = searchParams.get("shortSlug");
     const userId = searchParams.get("userId");
     if (shortSlug) where.shortSlug = shortSlug;
     if (userId) where.userId = userId;
-    const data = await prisma.url.findMany({ where });
+    const data = await prisma.shortLink.findMany({ where });
     return Response.json({ success: true, data });
   } catch (error) {
     console.log(error);

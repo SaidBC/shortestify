@@ -1,7 +1,8 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import useSWR from "swr";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
   Card,
@@ -17,18 +18,16 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { month: "January", upload: 0, click: 0 },
-  { month: "February", upload: 0, click: 0 },
-  { month: "March", upload: 0, click: 0 },
-  { month: "April", upload: 0, click: 0 },
-  { month: "May", upload: 0, click: 0 },
-  { month: "June", upload: 0, click: 0 },
-];
+import lastMonthData from "@/utils/lastMonthData";
+import clientEnv from "@/utils/clientEnv";
+import { ITransactionsChartResponse } from "@/types";
+import { useEffect, useState } from "react";
+import { Transaction } from "@prisma/client";
+import axios from "axios";
 
 const chartConfig = {
-  upload: {
-    label: "upload",
+  download: {
+    label: "download",
     color: "hsl(var(--chart-1))",
   },
   click: {
@@ -37,61 +36,44 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function ClicksDownloadsChart() {
+export default function ClicksDownloadsChart({
+  data,
+}: {
+  data: Transaction[];
+}) {
+  const chartData = lastMonthData(data);
   return (
-    <Card className="bg-slate-900 border-slate-950">
+    <Card className="flex flex-col bg-slate-900 border-slate-950">
       <CardHeader>
-        <CardTitle className="text-white">
-          Analytics for Downloads and Clicks
-        </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Bar Chart - Multiple</CardTitle>
+        <CardDescription>Last mounth</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="fill-blue-500">
         <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
+          <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="day"
               tickLine={false}
+              tickMargin={10}
               axisLine={false}
-              tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line
-              dataKey="upload"
-              type="monotone"
-              stroke="gray"
-              strokeWidth={2}
-              dot={false}
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dashed" />}
             />
-            <Line
-              dataKey="click"
-              type="monotone"
-              stroke="white"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
+            <Bar dataKey="downloads" fill="white" radius={4} />
+            <Bar dataKey="clicks" fill="var(--color-blue-500)" radius={4} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none text-white">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total click and downloads for the last 6 months
-            </div>
-          </div>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total click for the last month
         </div>
       </CardFooter>
     </Card>
