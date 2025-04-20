@@ -58,6 +58,12 @@ export type IcreateUserApiResponse =
   | ResponseSuccess<Pick<User, "username" | "id">>
   | ResponseError<IErrors>;
 
+export interface ITransactionsChartResultData {
+  day: string;
+  downloads: number;
+  redirects: number;
+}
+
 export type ITransactionsChartResponse =
-  | ResponseSuccess<Transaction[]>
+  | ResponseSuccess<ITransactionsChartResultData[]>
   | ResponseError<IErrors>;

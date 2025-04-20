@@ -18,30 +18,50 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import lastMonthData from "@/utils/lastMonthData";
+import lastMonthData from "@/utils/lastPeriodData";
 import clientEnv from "@/utils/clientEnv";
-import { ITransactionsChartResponse } from "@/types";
+import {
+  ITransactionsChartResponse,
+  ITransactionsChartResultData,
+} from "@/types";
 import { useEffect, useState } from "react";
 import { Transaction } from "@prisma/client";
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 const chartConfig = {
-  download: {
-    label: "download",
+  downloads: {
+    label: "downloads",
     color: "hsl(var(--chart-1))",
   },
-  click: {
-    label: "click",
+  redirects: {
+    label: "redirects",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
-export default function ClicksDownloadsChart({
-  data,
-}: {
-  data: Transaction[];
-}) {
-  const chartData = lastMonthData(data);
+export default function RedirectsDownloadsChart({}) {
+  const fetcher = async (arg: string) => {
+    const axiosFetcher = axios.create({
+      baseURL: clientEnv.NEXT_PUBLIC_API_URL,
+      timeout: 10000,
+    });
+    try {
+      const response = await axiosFetcher.get(arg);
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  };
+  const { data, isLoading, error } = useSWR<ITransactionsChartResponse>(
+    "/me/charts?type=REDIRECT,UPLOAD",
+    fetcher
+  );
+  if (isLoading) return <>Loading ...</>;
+  if (!data || error) return <>Error: Something went wrong</>;
+  const chart = data;
+  if (!chart.success) {
+    return <div>Error: Something went wrong</div>;
+  }
   return (
     <Card className="flex flex-col bg-slate-900 border-slate-950">
       <CardHeader>
@@ -50,7 +70,7 @@ export default function ClicksDownloadsChart({
       </CardHeader>
       <CardContent className="fill-blue-500">
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart accessibilityLayer data={chart.data}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="day"
@@ -64,7 +84,7 @@ export default function ClicksDownloadsChart({
               content={<ChartTooltipContent indicator="dashed" />}
             />
             <Bar dataKey="downloads" fill="white" radius={4} />
-            <Bar dataKey="clicks" fill="var(--color-blue-500)" radius={4} />
+            <Bar dataKey="redirects" fill="var(--color-blue-500)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -73,7 +93,7 @@ export default function ClicksDownloadsChart({
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total click for the last month
+          Showing total redirects for the last month
         </div>
       </CardFooter>
     </Card>

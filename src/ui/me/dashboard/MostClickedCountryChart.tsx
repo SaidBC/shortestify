@@ -30,30 +30,30 @@ const chartConfig = {
     label: "Visitors",
   },
   chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
+    label: "India",
+    color: "var(--color-blue-600)",
   },
   safari: {
     label: "Safari",
-    color: "hsl(var(--chart-2))",
+    color: "var(--color-blue-500)",
   },
   firefox: {
     label: "Firefox",
-    color: "hsl(var(--chart-3))",
+    color: "var(--color-blue-400)",
   },
   edge: {
     label: "Edge",
-    color: "hsl(var(--chart-4))",
+    color: "var(--color-blue-300)",
   },
   other: {
     label: "Other",
-    color: "hsl(var(--chart-5))",
+    color: "var(--color-blue-200)",
   },
 } satisfies ChartConfig;
 
 export default function MostClickedCountryChart() {
   return (
-    <Card>
+    <Card className="flex flex-col bg-slate-900 border-slate-950">
       <CardHeader>
         <CardTitle>Bar Chart - Mixed</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

@@ -1,11 +1,19 @@
 import prisma from "@/lib/prisma";
+import lastPeriodData from "@/utils/lastPeriodData";
+import { TransactionType } from "@prisma/client";
 import { NextRequest } from "next/server";
+
+const transactionTypes: TransactionType[] = ["UPLOAD", "REDIRECT"];
 
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.nextUrl);
-    const type = url.searchParams.get("type");
-    if (type !== "CLICK")
+    const typesParams = url.searchParams.get("type")?.split(",");
+    if (
+      !typesParams?.every((item): item is TransactionType =>
+        transactionTypes.some((transactionType) => transactionType === item)
+      )
+    )
       return Response.json({
         succes: false,
         errors: {
@@ -17,7 +25,9 @@ export async function GET(req: NextRequest) {
     const date = new Date();
     const transactions = await prisma.transaction.findMany({
       where: {
-        type,
+        type: {
+          in: typesParams,
+        },
         createdAt: {
           gte: new Date(date.setDate(date.getDate() - days)),
         },
@@ -26,10 +36,11 @@ export async function GET(req: NextRequest) {
         createdAt: "desc",
       },
     });
+    const data = lastPeriodData(transactions);
 
     return Response.json({
       success: true,
-      data: transactions,
+      data,
     });
   } catch (error) {
     return Response.json({
