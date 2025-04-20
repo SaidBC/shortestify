@@ -53,4 +53,4 @@ const authConfig = {
   adapter: PrismaAdapter(prisma),
 } satisfies NextAuthConfig;
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export const { signIn, signOut, handlers, auth } = NextAuth(authConfig);

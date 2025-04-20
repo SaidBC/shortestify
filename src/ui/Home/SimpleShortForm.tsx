@@ -23,7 +23,7 @@ export default function SimpleShortForm() {
 
   return (
     <>
-      <form action={formAction}>
+      <form data-testid="public-create-shortlink-form" action={formAction}>
         <div className="relative">
           <Input
             type="text"
