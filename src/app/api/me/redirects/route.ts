@@ -19,23 +19,20 @@ export async function GET(req: NextRequest) {
           request: ["Token not provided"],
         },
       });
-    const lastDayDownloadsCount = await prisma.click.count({
+    const lastDayRedirectsCount = await prisma.click.count({
       where: {
         shortLink: {
           userId: userToken.id,
-          type: "UPLOAD",
-        },
-        createdAt: {
-          gte: new Date(Date.now() - 24 * 60 * 60 * 60 * 1000),
+          type: "REDIRECT",
         },
         completed: true,
       },
     });
-    const yesterdayDownloadsCount = await prisma.click.count({
+    const yesterdayRedirectsCount = await prisma.click.count({
       where: {
         shortLink: {
           userId: userToken.id,
-          type: "UPLOAD",
+          type: "REDIRECT",
         },
         createdAt: {
           gte: new Date(Date.now() - 48 * 60 * 60 * 60 * 1000),
@@ -45,13 +42,13 @@ export async function GET(req: NextRequest) {
       },
     });
     const dailyChange = daily24hChange(
-      lastDayDownloadsCount,
-      yesterdayDownloadsCount
+      lastDayRedirectsCount,
+      yesterdayRedirectsCount
     );
     return Response.json({
       success: true,
       data: {
-        downloads: lastDayDownloadsCount,
+        redirects: lastDayRedirectsCount,
         dailyChange,
       },
     });

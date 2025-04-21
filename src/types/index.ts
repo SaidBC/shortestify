@@ -67,3 +67,22 @@ export interface ITransactionsChartResultData {
 export type ITransactionsChartResponse =
   | ResponseSuccess<ITransactionsChartResultData[]>
   | ResponseError<IErrors>;
+
+export type IUserBalanceResponse =
+  | ResponseSuccess<{
+      balance: number;
+      dailyChange: number;
+    }>
+  | ResponseError<IErrors>;
+export type IUserDailyDownloadsResponse =
+  | ResponseSuccess<{
+      downloads: number;
+      dailyChange: number;
+    }>
+  | ResponseError<IErrors>;
+export type IUserDailyRedirectsResponse =
+  | ResponseSuccess<{
+      redirects: number;
+      dailyChange: number;
+    }>
+  | ResponseError<IErrors>;

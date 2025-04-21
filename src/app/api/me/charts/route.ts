@@ -1,12 +1,27 @@
 import prisma from "@/lib/prisma";
+import clientEnv from "@/utils/clientEnv";
 import lastPeriodData from "@/utils/lastPeriodData";
+import serverEnv from "@/utils/serverEnv";
 import { TransactionType } from "@prisma/client";
+import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 
 const transactionTypes: TransactionType[] = ["UPLOAD", "REDIRECT"];
 
 export async function GET(req: NextRequest) {
   try {
+    const userToken = await getToken({
+      req,
+      secureCookie: clientEnv.NEXT_PUBLIC_NODE_ENV === "production",
+      secret: serverEnv.NEXTAUTH_SECRET,
+    });
+    if (!userToken)
+      return Response.json({
+        success: false,
+        errors: {
+          request: ["Token not provided"],
+        },
+      });
     const url = new URL(req.nextUrl);
     const typesParams = url.searchParams.get("type")?.split(",");
     if (
@@ -28,6 +43,7 @@ export async function GET(req: NextRequest) {
         type: {
           in: typesParams,
         },
+        userId: userToken.id,
         createdAt: {
           gte: new Date(date.setDate(date.getDate() - days)),
         },

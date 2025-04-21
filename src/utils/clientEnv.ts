@@ -5,6 +5,7 @@ const clientEnv = z.object({
   NEXT_PUBLIC_API_URL: z.string().url(),
   NEXT_PUBLIC_ADS_URL: z.string().url(),
   NEXT_PUBLIC_NOADS_URL: z.string().url(),
+  NEXT_PUBLIC_NODE_ENV: z.enum(["development", "production"]),
 });
 
 export default clientEnv.parse({
@@ -12,4 +13,5 @@ export default clientEnv.parse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_ADS_URL: process.env.NEXT_PUBLIC_ADS_URL,
   NEXT_PUBLIC_NOADS_URL: process.env.NEXT_PUBLIC_NOADS_URL,
+  NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
 });
