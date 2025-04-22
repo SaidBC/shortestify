@@ -22,7 +22,6 @@ export default async function DailyDownloadsCard() {
   });
   const data = res.data;
   if (!data.success) return <>Something went wrongs</>;
-  console.log(data);
   const downloads = data.data.downloads;
   const dailyChange = data.data.dailyChange;
   return (

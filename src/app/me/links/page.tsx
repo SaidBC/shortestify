@@ -7,19 +7,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IGetLinksResponse } from "@/types";
 import TopCards from "@/ui/me/links/TopCards";
+import clientEnv from "@/utils/clientEnv";
+import axios from "axios";
+import { getToken } from "next-auth/jwt";
+import { headers } from "next/headers";
 
-interface LinkData {
-  id: string;
-  url: string;
-  type: string;
-  clicks: number;
-  ads: number;
-  createdAt: string;
-}
+axios.defaults.baseURL = clientEnv.NEXT_PUBLIC_API_URL;
 
-export default function Page() {
-  const data: LinkData[] = [];
+export default async function Page() {
+  const token = await getToken({
+    secureCookie: clientEnv.NEXT_PUBLIC_NODE_ENV === "production",
+    raw: true,
+    req: {
+      headers: await headers(),
+    },
+  });
+  const res = await axios.get<IGetLinksResponse>("/me/links", {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  if (!res.data.success) return <>{res.data.errors.request[0]}</>;
+  const { links, ...data } = res.data.data;
   return (
     <main className="p-4 @container">
       <Card className="bg-slate-800 text-white border-white/20">
@@ -27,7 +38,7 @@ export default function Page() {
           <CardTitle className="text-4xl ml-4">LINKS / UPLOADS</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 ">
-          <TopCards />
+          <TopCards {...data} />
           <div className="flex flex-col gap-2">
             <div>
               <h2 className="text-2xl font-bold text-center text-white">
@@ -49,14 +60,21 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map((link) => (
-                    <TableRow key={link.id} className="hover:bg-slate-700">
-                      <TableCell className="text-white">{link.url}</TableCell>
+                  {links.map((link) => (
+                    <TableRow
+                      key={link.shortSlug}
+                      className="hover:bg-slate-700"
+                    >
+                      <TableCell className="text-white">
+                        {link.shortSlug}
+                      </TableCell>
                       <TableCell className="text-white">{link.type}</TableCell>
                       <TableCell className="text-white">
-                        {link.clicks}
+                        {link._count.clicks}
                       </TableCell>
-                      <TableCell className="text-white">{link.ads}</TableCell>
+                      <TableCell className="text-white">
+                        {link.ads ? "Yes" : "No"}
+                      </TableCell>
                       <TableCell className="text-white">
                         {new Date(link.createdAt).toLocaleDateString()}
                       </TableCell>

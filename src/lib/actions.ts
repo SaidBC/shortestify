@@ -3,6 +3,9 @@ import {
   createLinkPublicState,
   IAuthFormState,
   IcreateUserApiResponse,
+  ISettingsFormState,
+  IUpdateSettingsResponse,
+  IUserCreateLinkState,
 } from "@/types";
 import clientEnv from "../utils/clientEnv";
 import createLinkSchema from "./schemas/createLinkSchema";
@@ -13,6 +16,13 @@ import bcrypt from "bcryptjs";
 import { signIn, signOut } from "@/auth";
 import signUpSchema from "./schemas/signUpSchema";
 import { revalidatePath } from "next/cache";
+import { getToken } from "next-auth/jwt";
+import { headers } from "next/headers";
+import updateUsernameSchema from "./schemas/updateUsernameSchema";
+import updateEmailSchema from "./schemas/updateEmailSchema";
+import updatePasswordSchema from "./schemas/updatePasswordSchema";
+
+axios.defaults.baseURL = clientEnv.NEXT_PUBLIC_API_URL;
 
 export async function createLinkPublicAction(
   prevState: any,
@@ -26,10 +36,7 @@ export async function createLinkPublicAction(
     };
   }
   try {
-    const res = await axios.post(
-      clientEnv.NEXT_PUBLIC_API_URL + "/urls",
-      validateData.data
-    );
+    const res = await axios.post("/urls", validateData.data);
     if (res.data.success) {
       return {
         status: "SUCCESS",
@@ -101,8 +108,6 @@ export async function signUpWithCredentials(
   prevState: any,
   formData: FormData
 ): Promise<IAuthFormState> {
-  console.log(formData);
-
   const validatedData = signUpSchema.safeParse(Object.fromEntries(formData));
   if (!validatedData.success)
     return {
@@ -112,10 +117,7 @@ export async function signUpWithCredentials(
     };
   const { confirmPassword, ...data } = validatedData.data;
   try {
-    const res = await axios.post<IcreateUserApiResponse>(
-      clientEnv.NEXT_PUBLIC_API_URL + "/users",
-      data
-    );
+    const res = await axios.post<IcreateUserApiResponse>("/users", data);
     if (!res.data.success)
       return {
         isSuccess: false,
@@ -146,4 +148,143 @@ export async function signUpWithCredentials(
 export async function logout() {
   await signOut();
   revalidatePath("/me/dashboard");
+}
+
+export async function userCreateLink(
+  prevState: any,
+  formData: FormData
+): Promise<IUserCreateLinkState> {
+  const validateData = createLinkSchema.safeParse(Object.fromEntries(formData));
+  if (!validateData.success) {
+    return {
+      status: "FAILED",
+      errors: validateData.error.flatten().fieldErrors,
+    };
+  }
+  try {
+    const token = await getToken({
+      secureCookie: clientEnv.NEXT_PUBLIC_NODE_ENV === "production",
+      raw: true,
+      req: {
+        headers: await headers(),
+      },
+    });
+    const res = await axios.post("/urls", validateData.data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    if (res.data.success) {
+      return {
+        status: "SUCCESS",
+        data: res.data.data,
+      };
+    } else {
+      return {
+        status: "FAILED",
+        errors: res.data.errors,
+      };
+    }
+  } catch (error) {
+    return {
+      status: "FAILED",
+      errors: {
+        request: ["Something went wrong try again ."],
+      },
+    };
+  }
+}
+
+type SettingsType = "email" | "password" | "username";
+async function updateSettings(
+  data: any,
+  settingsType: SettingsType
+): Promise<ISettingsFormState> {
+  try {
+    const token = await getToken({
+      secureCookie: clientEnv.NEXT_PUBLIC_NODE_ENV === "production",
+      raw: true,
+      req: {
+        headers: await headers(),
+      },
+    });
+    const res = await axios.post<IUpdateSettingsResponse>(
+      "/me/settings/" + settingsType,
+      data,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    console.log(res);
+    if (!res.data.success)
+      return {
+        isSuccess: false,
+        isError: true,
+        errors: res.data.errors,
+      };
+    return {
+      isSuccess: true,
+      isError: false,
+    };
+  } catch (error) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: {
+        request: ["Something went wrong try again ."],
+      },
+    };
+  }
+}
+
+export async function updateUsername(
+  prevState: any,
+  formData: FormData
+): Promise<ISettingsFormState> {
+  const validateData = updateUsernameSchema.safeParse(
+    Object.fromEntries(formData)
+  );
+  if (!validateData.success) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: validateData.error.flatten().fieldErrors,
+    };
+  }
+  return updateSettings(validateData.data, "username");
+}
+
+export async function updateEmail(
+  prevState: any,
+  formData: FormData
+): Promise<ISettingsFormState> {
+  const validateData = updateEmailSchema.safeParse(
+    Object.fromEntries(formData)
+  );
+  if (!validateData.success) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: validateData.error.flatten().fieldErrors,
+    };
+  }
+  return updateSettings(validateData.data, "email");
+}
+export async function updatePassword(
+  prevState: any,
+  formData: FormData
+): Promise<ISettingsFormState> {
+  const validateData = updatePasswordSchema.safeParse(
+    Object.fromEntries(formData)
+  );
+  if (!validateData.success) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: validateData.error.flatten().fieldErrors,
+    };
+  }
+  return updateSettings(validateData.data, "password");
 }

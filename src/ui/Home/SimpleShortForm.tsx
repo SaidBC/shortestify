@@ -5,14 +5,10 @@ import { Input } from "@/components/ui/input";
 import { createLinkPublicAction } from "@/lib/actions";
 import { createLinkPublicState } from "@/types";
 import { useActionState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CheckCheck } from "lucide-react";
-import clientEnv from "@/utils/clientEnv";
+import CreateLinkResponseAlert from "@/components/CreateLinkResponseAlert";
 
 const initialState: createLinkPublicState = {
   status: "PENDING",
-  data: undefined,
-  errors: {},
 };
 
 export default function SimpleShortForm() {
@@ -40,29 +36,7 @@ export default function SimpleShortForm() {
           </Button>
         </div>
       </form>
-      {state.status === "FAILED" && state.errors && (
-        <Alert className="text-red-900 bg-red-400 border-red-700">
-          <AlertCircle></AlertCircle>
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription className="text-red-900">
-            {Object.values(state.errors)[0]}
-          </AlertDescription>
-        </Alert>
-      )}
-      {state.status === "SUCCESS" && state.data && (
-        <Alert className="text-green-900 bg-green-400 border-green-700">
-          <CheckCheck />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription className="text-green-900">
-            <p className="flex flex-col md:flex-row">
-              <span>Your new url is :</span>
-              <b>
-                {clientEnv.NEXT_PUBLIC_ADS_URL + "/" + state.data.shortSlug}
-              </b>
-            </p>
-          </AlertDescription>
-        </Alert>
-      )}
+      <CreateLinkResponseAlert state={state} />
     </>
   );
 }

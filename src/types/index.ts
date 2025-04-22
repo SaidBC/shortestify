@@ -1,4 +1,4 @@
-import { Click, Transaction, ShortLink, User } from "@prisma/client";
+import { Click, Transaction, ShortLink, User, $Enums } from "@prisma/client";
 
 export type WithdrawMethods = "USDT" | "PAYPAL" | "PAYEER" | "PERFECTMONEY";
 
@@ -6,11 +6,22 @@ interface IErrors {
   [k: string]: string[];
 }
 
-export interface createLinkPublicState {
-  status: "PENDING" | "SUCCESS" | "FAILED";
-  data?: ShortLink;
-  errors?: IErrors;
+interface createLinkPublicSuccessState {
+  status: "SUCCESS";
+  data: ShortLink;
 }
+interface createLinkPublicPendingState {
+  status: "PENDING";
+}
+interface createLinkPublicFailedState {
+  status: "FAILED";
+  errors: IErrors;
+}
+
+export type createLinkPublicState =
+  | createLinkPublicSuccessState
+  | createLinkPublicPendingState
+  | createLinkPublicFailedState;
 
 interface ResponseError<Errors> {
   success: false;
@@ -85,4 +96,33 @@ export type IUserDailyRedirectsResponse =
       redirects: number;
       dailyChange: number;
     }>
+  | ResponseError<IErrors>;
+
+export type IUserCreateLinkState = createLinkPublicState;
+
+interface LinkData {
+  type: $Enums.UrlType;
+  ads: boolean;
+  shortSlug: string;
+  createdAt: string;
+  _count: {
+    clicks: number;
+  };
+}
+
+interface IGetLinksData {
+  redirects: number;
+  uploads: number;
+  dailyRedirects: number;
+  dailyUploads: number;
+  links: LinkData[];
+}
+
+export type IGetLinksResponse =
+  | ResponseSuccess<IGetLinksData>
+  | ResponseError<IErrors>;
+
+export type ISettingsFormState = IAuthFormState;
+export type IUpdateSettingsResponse =
+  | ResponseSuccess<null>
   | ResponseError<IErrors>;
