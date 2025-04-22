@@ -31,7 +31,7 @@ export default async function BalanceCard() {
             ${balance}
           </span>
           <span className="text-green-400 font-bold text-xl">
-            +${dailyChange.toFixed(2)}
+            +${dailyChange.toFixed(3)}
           </span>
         </div>
       </CardContent>

@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
       (f, s) => f + s.amount.toNumber(),
       0
     );
-
     if (!user)
       return Response.json({
         success: false,
