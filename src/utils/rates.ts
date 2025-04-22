@@ -96,3 +96,5 @@ const countryRates = [
     image: "/globe.svg",
   },
 ];
+
+export default countryRates;

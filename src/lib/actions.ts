@@ -6,6 +6,7 @@ import {
   ISettingsFormState,
   IUpdateSettingsResponse,
   IUserCreateLinkState,
+  IWithdrawFormState,
 } from "@/types";
 import clientEnv from "../utils/clientEnv";
 import createLinkSchema from "./schemas/createLinkSchema";
@@ -21,6 +22,7 @@ import { headers } from "next/headers";
 import updateUsernameSchema from "./schemas/updateUsernameSchema";
 import updateEmailSchema from "./schemas/updateEmailSchema";
 import updatePasswordSchema from "./schemas/updatePasswordSchema";
+import withdrawSchema from "./schemas/withdrawSchema";
 
 axios.defaults.baseURL = clientEnv.NEXT_PUBLIC_API_URL;
 
@@ -287,4 +289,54 @@ export async function updatePassword(
     };
   }
   return updateSettings(validateData.data, "password");
+}
+
+export async function withdraw(
+  prevState: any,
+  formData: FormData
+): Promise<IWithdrawFormState> {
+  const validateData = withdrawSchema.safeParse(Object.fromEntries(formData));
+  if (!validateData.success) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: validateData.error.flatten().fieldErrors,
+    };
+  }
+  try {
+    const token = await getToken({
+      secureCookie: clientEnv.NEXT_PUBLIC_NODE_ENV === "production",
+      raw: true,
+      req: {
+        headers: await headers(),
+      },
+    });
+    const res = await axios.post<IUpdateSettingsResponse>(
+      "/me/withdraw",
+      validateData.data,
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    if (!res.data.success)
+      return {
+        isSuccess: false,
+        isError: true,
+        errors: res.data.errors,
+      };
+    return {
+      isSuccess: true,
+      isError: false,
+    };
+  } catch (error) {
+    return {
+      isError: true,
+      isSuccess: false,
+      errors: {
+        request: ["Something went wrong try again ."],
+      },
+    };
+  }
 }

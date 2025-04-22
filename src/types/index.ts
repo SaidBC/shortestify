@@ -1,4 +1,11 @@
-import { Click, Transaction, ShortLink, User, $Enums } from "@prisma/client";
+import {
+  Click,
+  Transaction,
+  ShortLink,
+  User,
+  $Enums,
+  File,
+} from "@prisma/client";
 
 export type WithdrawMethods = "USDT" | "PAYPAL" | "PAYEER" | "PERFECTMONEY";
 
@@ -41,11 +48,7 @@ export type IgetUrlsResponse =
 
 export type ICheckClickResponse =
   | ResponseError<IErrors>
-  | ResponseSuccess<
-      Click & {
-        shortLink: ShortLink;
-      }
-    >;
+  | ResponseSuccess<string | File[]>;
 
 interface IAuthFormStateSuccess {
   isSuccess: true;
@@ -123,6 +126,7 @@ export type IGetLinksResponse =
   | ResponseError<IErrors>;
 
 export type ISettingsFormState = IAuthFormState;
+export type IWithdrawFormState = IAuthFormState;
 export type IUpdateSettingsResponse =
   | ResponseSuccess<null>
   | ResponseError<IErrors>;

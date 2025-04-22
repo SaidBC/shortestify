@@ -27,6 +27,7 @@ import {
 import { useEffect, useState } from "react";
 import { Transaction } from "@prisma/client";
 import axios, { Axios } from "axios";
+import globalFetcher from "@/utils/globalFetcher";
 
 const chartConfig = {
   downloads: {
@@ -40,21 +41,9 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function RedirectsDownloadsChart({}) {
-  const fetcher = async (arg: string) => {
-    const axiosFetcher = axios.create({
-      baseURL: clientEnv.NEXT_PUBLIC_API_URL,
-      timeout: 10000,
-    });
-    try {
-      const response = await axiosFetcher.get(arg);
-      return response.data;
-    } catch (err) {
-      throw err;
-    }
-  };
   const { data, isLoading, error } = useSWR<ITransactionsChartResponse>(
     "/me/charts?type=REDIRECT,UPLOAD",
-    fetcher
+    globalFetcher
   );
   if (isLoading) return <>Loading ...</>;
   if (!data || error) return <>Error: Something went wrong</>;

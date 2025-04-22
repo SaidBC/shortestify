@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     return Response.json({
       success: true,
       data: {
-        balance: user.balance,
+        balance: Number(user.balance),
         dailyChange,
       },
     });

@@ -22,7 +22,8 @@ export default function CountDown({ clickId, setLink }: CountDownProps) {
     } else {
       const fetchData = async () => {
         const click = await checkClick(clickId);
-        if (click.success && click.data.completed) setLink(click.data.url.url);
+        if (click.success && typeof click.data === "string")
+          setLink(click.data);
       };
       fetchData();
     }

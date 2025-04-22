@@ -66,7 +66,10 @@ export default async function Page() {
                       className="hover:bg-slate-700"
                     >
                       <TableCell className="text-white">
-                        {link.shortSlug}
+                        {link.ads
+                          ? clientEnv.NEXT_PUBLIC_ADS_URL
+                          : clientEnv.NEXT_PUBLIC_NOADS_URL}
+                        /{link.shortSlug}
                       </TableCell>
                       <TableCell className="text-white">{link.type}</TableCell>
                       <TableCell className="text-white">

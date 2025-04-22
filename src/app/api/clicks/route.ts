@@ -1,14 +1,17 @@
 import prisma from "@/lib/prisma";
 import createClickSchema from "@/lib/schemas/createClickSchema";
+import clientEnv from "@/utils/clientEnv";
 import axios from "axios";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   const ip =
-    ("ip" in req && req.ip) ||
-    req.headers.get("x-real-ip") ||
-    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-    "unknown";
+    clientEnv.NEXT_PUBLIC_NODE_ENV === "development"
+      ? "8.8.8.8"
+      : ("ip" in req && req.ip) ||
+        req.headers.get("x-real-ip") ||
+        req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+        "unknown";
   try {
     const response = await axios(
       `https://www.ipinfo.io/${ip}?token=${process.env.IPINFO_API_KEY}`
@@ -29,8 +32,16 @@ export async function POST(req: NextRequest) {
       });
     }
     const { data } = validatedData;
+    const country = await prisma.country.findUnique({
+      where: {
+        code: data.countryCode,
+      },
+    });
     const click = await prisma.click.create({
-      data,
+      data: {
+        amount: country ? Number(country.rate.toNumber() / 1000) : undefined,
+        ...data,
+      },
       include: {
         shortLink: true,
       },

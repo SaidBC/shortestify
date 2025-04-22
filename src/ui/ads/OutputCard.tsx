@@ -7,6 +7,7 @@ import { useState } from "react";
 
 export default function OutputCard({ clickId }: { clickId: string }) {
   const [link, setLink] = useState<string | null>(null);
+
   return (
     <Card className="max-w-md flex flex-col items-center bg-indigo-700 border-indigo-950 text-white mx-auto w-full">
       <CardContent>

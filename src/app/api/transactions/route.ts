@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         where: { id: data.userId },
         data: {
           balance:
-            data.type === "CLICK"
+            data.type !== "WITHDRAW"
               ? { increment: data.amount }
               : { decrement: data.amount },
         },

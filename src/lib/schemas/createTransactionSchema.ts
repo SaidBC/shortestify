@@ -5,7 +5,7 @@ const createTransactionSchema = z.object({
   amount: z
     .number({ message: "Amount must be number" })
     .positive({ message: "Amount must be positive" }),
-  type: z.enum(["CLICK", "WITHDRAW"], {
+  type: z.enum(["REDIRECT", "UPLOAD", "WITHDRAW"], {
     message: "Type must be withdraw or credit",
   }),
 });
