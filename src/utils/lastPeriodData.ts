@@ -3,19 +3,18 @@ import { Transaction } from "@prisma/client";
 import { format } from "date-fns";
 
 export default function lastPeriodData(data: Transaction[], days: number = 30) {
-  const temp = Array.from(data);
   let result: ITransactionsChartResultData[] = [];
-  const date = new Date();
+  const date = new Date(format(new Date(), "dd MMM yyyy"));
   for (let day = 0; day < days; day++) {
     let downloads = 0;
     let redirects = 0;
-    for (const transaction of temp) {
-      const transactionDate = new Date(transaction.createdAt);
-
-      if (transactionDate <= date) {
+    for (const transaction of data.slice(downloads + redirects)) {
+      const transactionDate = new Date(
+        format(new Date(transaction.createdAt), "dd MMM yyyy")
+      );
+      if (transactionDate.getTime() === date.getTime()) {
         if (transaction.type === "REDIRECT") redirects++;
         else if (transaction.type === "UPLOAD") downloads++;
-        temp.shift();
       } else {
         break;
       }
@@ -27,6 +26,5 @@ export default function lastPeriodData(data: Transaction[], days: number = 30) {
     });
     date.setDate(date.getDate() - 1);
   }
-  console.log(result);
   return result;
 }
