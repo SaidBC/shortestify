@@ -7,12 +7,12 @@ export default function lastPeriodData(data: Transaction[], days: number = 30) {
   let result: ITransactionsChartResultData[] = [];
   const date = new Date();
   for (let day = 0; day < days; day++) {
-    date.setDate(date.getDate() - 1);
     let downloads = 0;
     let redirects = 0;
     for (const transaction of temp) {
       const transactionDate = new Date(transaction.createdAt);
-      if (transactionDate >= date) {
+
+      if (transactionDate <= date) {
         if (transaction.type === "REDIRECT") redirects++;
         else if (transaction.type === "UPLOAD") downloads++;
         temp.shift();
@@ -25,6 +25,8 @@ export default function lastPeriodData(data: Transaction[], days: number = 30) {
       downloads,
       redirects,
     });
+    date.setDate(date.getDate() - 1);
   }
+  console.log(result);
   return result;
 }
