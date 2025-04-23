@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
     const response = await axios(
       `https://www.ipinfo.io/${ip}?token=${process.env.IPINFO_API_KEY}`
     );
+    console.log(req);
+
     const countryCode = response.data.country || "unknown";
     const { shortSlug } = await req.json();
     const validatedData = createClickSchema.safeParse({
@@ -48,9 +50,10 @@ export async function POST(req: NextRequest) {
     });
     return Response.json({ success: true, data: click });
   } catch (error) {
+    console.log(error);
     return Response.json({
       success: false,
-      data: {
+      errors: {
         request: "Something went wrong try again .",
       },
     });
