@@ -1,6 +1,6 @@
+import AdsterraAd from "@/components/AdsterraAd";
 import { IgetUrlsResponse } from "@/types";
 import AdSkeleton from "@/ui/ads/AdSkeleton";
-import OutputCard from "@/ui/ads/OutputCard";
 import OutputContainer from "@/ui/ads/OutputContainer";
 import clientEnv from "@/utils/clientEnv";
 import axios from "axios";
@@ -27,7 +27,12 @@ export default async function Page({
   return (
     <main className="min-h-dvh pt-36 grid grid-cols-[auto_1fr_auto] px-4">
       <div>
-        <AdSkeleton classname="w-40 h-100" />
+        <div style={{ margin: "20px 0" }}>
+          <AdsterraAd
+            adKey="4c73750420c446c024df0156ae7cc7c2"
+            format="javascript"
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-4 justify-self-center">
         <AdSkeleton classname="w-125 h-20" />

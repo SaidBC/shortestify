@@ -219,7 +219,6 @@ async function updateSettings(
         },
       }
     );
-    console.log(res);
     if (!res.data.success)
       return {
         isSuccess: false,

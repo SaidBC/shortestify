@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
       });
     const body = await req.json();
     const validatedData = updateUsernameSchema.safeParse(body);
-    console.log(body, validatedData);
 
     if (!validatedData.success) {
       return Response.json({

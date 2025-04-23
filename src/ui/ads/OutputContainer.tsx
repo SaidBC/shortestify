@@ -7,7 +7,6 @@ export default async function OutputContainer({
   shortSlug: string;
 }) {
   const clickStart = await initializeClick(shortSlug);
-  console.log(clickStart);
   if (!clickStart.success) return <>Something went wrong</>;
   return (
     <div>
