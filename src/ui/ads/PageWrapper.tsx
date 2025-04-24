@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AdBanner } from "@/components/AdsterraAd";
+import AdBanner from "@/components/AdBanner";
 import { cn } from "@/lib/utils";
 
 interface PageWrapperProps {
@@ -82,7 +82,6 @@ export function PageWrapper({
         <div className="flex min-h-screen">
           <div className="hidden md:block md:w-[300px] border-r p-4">
             <AdBanner
-              position="side"
               key=""
               className="w-full sticky top-4"
               onLoad={handleAdLoad}
@@ -91,27 +90,18 @@ export function PageWrapper({
 
           <div className="flex-1 flex flex-col">
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-4 border-b">
-              <AdBanner
-                key=""
-                className="max-w-[728px] mx-auto"
-                onLoad={handleAdLoad}
-              />
+              <AdBanner key="" onLoad={handleAdLoad} />
             </div>
 
             <main className="flex-1 p-8">{children}</main>
 
             <div className="border-t py-4">
-              <AdBanner
-                key=""
-                className="max-w-[728px] mx-auto"
-                onLoad={handleAdLoad}
-              />
+              <AdBanner key="" onLoad={handleAdLoad} />
             </div>
           </div>
 
           <div className="hidden lg:block lg:w-[300px] border-l p-4">
             <AdBanner
-              position="side"
               key=""
               className="w-full sticky top-4"
               onLoad={handleAdLoad}

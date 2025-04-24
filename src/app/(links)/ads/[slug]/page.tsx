@@ -1,4 +1,4 @@
-import AdsterraAd from "@/components/AdsterraAd";
+import AdsterraAd from "@/components/AdBanner";
 import { IgetUrlsResponse } from "@/types";
 import AdSkeleton from "@/ui/ads/AdSkeleton";
 import OutputContainer from "@/ui/ads/OutputContainer";
