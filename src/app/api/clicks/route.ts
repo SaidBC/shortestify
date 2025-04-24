@@ -3,6 +3,10 @@ import createClickSchema from "@/lib/schemas/createClickSchema";
 import clientEnv from "@/utils/clientEnv";
 import axios from "axios";
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/edge";
+export const config = {
+  runtime: "edge",
+};
 
 export async function POST(req: NextRequest) {
   const ip =
@@ -16,7 +20,8 @@ export async function POST(req: NextRequest) {
     const response = await axios(
       `https://www.ipinfo.io/${ip}?token=${process.env.IPINFO_API_KEY}`
     );
-    console.log(req);
+    ipAddress;
+    console.log(ipAddress(req));
 
     const countryCode = response.data.country || "unknown";
     const { shortSlug } = await req.json();
