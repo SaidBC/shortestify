@@ -33,23 +33,13 @@ export default function AdBanner({
     if (!adContainerRef.current || adLoaded.current) return;
 
     const loadAd = async () => {
-      // If ads are disabled, call onLoad immediately and return
-      if (process.env.NEXT_PUBLIC_ADS_ENABLED !== "true") {
-        handleOnLoad();
-        return;
-      }
-
       try {
         const container = adContainerRef.current;
         if (!container) {
           throw new Error("Ad container not found");
         }
-
-        // Clear previous content and error state
         container.innerHTML = "";
         setLoadError(null);
-
-        // Create a unique ID for this ad instance
         const adId = `ad-$-${Math.random().toString(36).substr(2, 9)}`;
 
         // Create container div with unique ID
@@ -162,9 +152,7 @@ export default function AdBanner({
         }}
       >
         <div className="flex justify-center items-center text-sm text-muted-foreground h-full">
-          {process.env.NEXT_PUBLIC_ADS_ENABLED !== "true" ? (
-            "Ads disabled"
-          ) : loadError ? (
+          {loadError ? (
             <span className="text-red-500">{loadError}</span>
           ) : (
             "Loading advertisement..."

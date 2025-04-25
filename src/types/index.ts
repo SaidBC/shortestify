@@ -130,3 +130,7 @@ export type IWithdrawFormState = IAuthFormState;
 export type IUpdateSettingsResponse =
   | ResponseSuccess<null>
   | ResponseError<IErrors>;
+
+export type IGetShortlinkResponse =
+  | ResponseSuccess<ShortLink | null>
+  | ResponseError<IErrors>;

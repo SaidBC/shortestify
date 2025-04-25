@@ -38,7 +38,7 @@ export async function createLinkPublicAction(
     };
   }
   try {
-    const res = await axios.post("/urls", validateData.data);
+    const res = await axios.post("/shortlinks", validateData.data);
     if (res.data.success) {
       return {
         status: "SUCCESS",
@@ -171,7 +171,7 @@ export async function userCreateLink(
         headers: await headers(),
       },
     });
-    const res = await axios.post("/urls", validateData.data, {
+    const res = await axios.post("/shortlinks", validateData.data, {
       headers: {
         Authorization: "Bearer " + token,
       },

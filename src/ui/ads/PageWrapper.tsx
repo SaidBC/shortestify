@@ -35,8 +35,8 @@ export function PageWrapper({
   const handleAdLoad = () => {
     setLoadedAds((prev) => {
       const newCount = prev + 1;
-      if (newCount >= totalAds) {
-        onAdsLoad?.();
+      if (newCount >= totalAds && onAdsLoad) {
+        onAdsLoad();
       }
       return newCount;
     });

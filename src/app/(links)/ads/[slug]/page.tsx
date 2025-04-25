@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CountdownTimer } from "@/components/countdown/countdown-timer";
 import { LinkReveal } from "@/components/link-reveal/link-reveal";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -9,18 +9,24 @@ import { toast } from "sonner";
 import { isBot } from "@/lib/user-agent";
 import { checkRateLimit } from "@/lib/rate-limiter";
 import { PageWrapper } from "@/ui/ads/PageWrapper";
+import initializeClick from "@/lib/initializeClick";
+import { usePathname } from "next/navigation";
+import checkClick from "@/lib/checkClick";
 
 const COUNTDOWN_DURATION = 30; // in seconds
 
 export default function Page() {
+  const pathname = usePathname();
+  const slug = pathname.split("/").at(-1);
   const [isLoading, setIsLoading] = useState(true);
+  const [clickId, setClickId] = useState("");
   const [isRevealed, setIsRevealed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [targetLink, setTargetLink] = useState("");
   const [adsLoaded, setAdsLoaded] = useState(false);
 
   useEffect(() => {
-    const initializePage = () => {
+    const initializePage = async () => {
       try {
         if (typeof navigator !== "undefined" && isBot(navigator.userAgent)) {
           throw new Error("Bot access detected");
@@ -34,15 +40,16 @@ export default function Page() {
         if (checkRateLimit(sessionId)) {
           throw new Error("Rate limit exceeded. Please try again later.");
         }
-
-        const link = process.env.NEXT_PUBLIC_TARGET_LINK;
-        if (!link) {
-          throw new Error("Target link not configured");
+        if (typeof slug !== "string") throw Error("Invalid Slug type");
+        const clickResponse = await initializeClick(slug);
+        console.log(clickResponse);
+        if (!clickResponse.success) {
+          throw new Error(
+            "Click Response error :" + clickResponse.errors.request[0]
+          );
         }
-
-        setTargetLink(link);
+        setClickId(clickResponse.data.id);
         setIsLoading(false);
-
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden") {
             window.sessionStorage.setItem("timer_paused", "true");
@@ -64,10 +71,16 @@ export default function Page() {
     };
   }, []);
 
-  const handleCountdownComplete = () => {
+  const handleCountdownComplete = useCallback(async () => {
+    const checkClickResponse = await checkClick(clickId);
+    if (!checkClickResponse.success) {
+      return toast.dismiss("Link revealed rejected");
+    }
+    if (typeof checkClickResponse.data === "string")
+      setTargetLink(checkClickResponse.data);
     setIsRevealed(true);
     toast.success("Link revealed successfully!");
-  };
+  }, [clickId]);
 
   const handleAdsLoaded = () => {
     setAdsLoaded(true);

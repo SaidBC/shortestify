@@ -1,29 +1,21 @@
 import prisma from "@/lib/prisma";
 import createClickSchema from "@/lib/schemas/createClickSchema";
 import clientEnv from "@/utils/clientEnv";
-import axios from "axios";
 import { NextRequest } from "next/server";
-import { ipAddress } from "@vercel/edge";
-export const config = {
-  runtime: "edge",
-};
+import { ipAddress, COUNTRY_HEADER_NAME } from "@vercel/edge";
+
+export const config = { runtime: "edge" };
 
 export async function POST(req: NextRequest) {
-  const ip =
-    clientEnv.NEXT_PUBLIC_NODE_ENV === "development"
-      ? "8.8.8.8"
-      : ("ip" in req && req.ip) ||
-        req.headers.get("x-real-ip") ||
-        req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-        "unknown";
   try {
-    const response = await axios(
-      `https://www.ipinfo.io/${ip}?token=${process.env.IPINFO_API_KEY}`
-    );
-    ipAddress;
-    console.log(ipAddress(req));
-
-    const countryCode = response.data.country || "unknown";
+    const ip =
+      clientEnv.NEXT_PUBLIC_NODE_ENV === "development"
+        ? "8.8.8.8"
+        : ipAddress(req);
+    const countryCode =
+      clientEnv.NEXT_PUBLIC_NODE_ENV === "development"
+        ? "US"
+        : req.headers.get(COUNTRY_HEADER_NAME) || "Unknown";
     const { shortSlug } = await req.json();
     const validatedData = createClickSchema.safeParse({
       ip,
