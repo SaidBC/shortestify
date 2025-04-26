@@ -81,7 +81,11 @@ export default function Page() {
     setIsRevealed(true);
     toast.success("Link revealed successfully!");
   }, [clickId]);
-
+  useEffect(() => {
+    if (adsLoaded) {
+      setAdsLoaded(true);
+    }
+  }, [adsLoaded]);
   const handleAdsLoaded = () => {
     setAdsLoaded(true);
   };

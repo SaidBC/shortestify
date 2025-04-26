@@ -13,7 +13,7 @@ export default function Header() {
   const handleClose = useCallback(() => setIsMenuOpen(false), []);
   const handleOpen = useCallback(() => setIsMenuOpen(true), []);
   return (
-    <header className="fixed z-1000 flex justify-between items-center w-full text-white h-18 px-4 md:px-8 bg-indigo-500">
+    <header className="fixed top-0 z-1000 flex justify-between items-center w-full text-white h-18 px-4 md:px-8 bg-indigo-500">
       <Logo />
       <nav className="">
         <div className="hidden md:block">

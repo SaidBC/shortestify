@@ -43,10 +43,10 @@ export function PageWrapper({
   };
 
   return (
-    <div className={cn("min-h-screen bg-background", className)}>
+    <div className={cn("min-h-screen bg-background mt-18", className)}>
       {isMobile ? (
         <div className="flex flex-col min-h-screen">
-          <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-2 border-b">
+          <div className="sticky top-18 z-10 bg-background/80 backdrop-blur-sm py-2 border-b">
             <AdBanner
               key=""
               className="max-w-full overflow-hidden px-2"
@@ -83,13 +83,13 @@ export function PageWrapper({
           <div className="hidden md:block md:w-[300px] border-r p-4">
             <AdBanner
               key=""
-              className="w-full sticky top-4"
+              className="w-full sticky top-18"
               onLoad={handleAdLoad}
             />
           </div>
 
           <div className="flex-1 flex flex-col">
-            <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-4 border-b">
+            <div className="sticky top-18 z-10 bg-background/80 backdrop-blur-sm py-4 border-b">
               <AdBanner key="" onLoad={handleAdLoad} />
             </div>
 
@@ -103,7 +103,7 @@ export function PageWrapper({
           <div className="hidden lg:block lg:w-[300px] border-l p-4">
             <AdBanner
               key=""
-              className="w-full sticky top-4"
+              className="w-full sticky top-18"
               onLoad={handleAdLoad}
             />
           </div>
