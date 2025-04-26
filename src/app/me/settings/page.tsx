@@ -8,6 +8,12 @@ import {
 import CreateLinksForm from "@/ui/me/create/CreateLinksForm";
 import SettingsOptions from "@/ui/me/settings/SettingsOptions";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Settings",
+};
+
 export default function Page() {
   return (
     <main className="p-4 @container flex items-center justify-center">

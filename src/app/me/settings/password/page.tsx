@@ -6,7 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import PasswordForm from "@/ui/me/settings/password/PasswordForm";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Change Password",
+};
 export default function Page() {
   return (
     <main className="p-4 @container flex items-center justify-center">

@@ -6,6 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import CreateLinksForm from "@/ui/me/create/CreateLinksForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create",
+};
 
 export default function Page() {
   return (

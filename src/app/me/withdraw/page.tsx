@@ -6,7 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import WithdrawForm from "@/ui/me/withdraw/WithdrawForm";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Withdraw",
+};
 export default function Page() {
   return (
     <main className="p-4 @container flex items-center justify-center">

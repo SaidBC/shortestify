@@ -2,7 +2,15 @@ import Navbar from "@/ui/me/Navbar";
 import "../globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { Metadata } from "next";
 config.autoAddCss = false;
+
+export const metadata: Metadata = {
+  title: {
+    default: "Shortestify",
+    template: "%s - Shortestify",
+  },
+};
 
 export default function RootLayout({
   children,

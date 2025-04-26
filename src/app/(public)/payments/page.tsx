@@ -1,5 +1,9 @@
 import LastWithdraw from "@/ui/payments/LastWithdraws";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Payments",
+};
 export default function Page() {
   return (
     <main className="pt-18 min-h-dvh">

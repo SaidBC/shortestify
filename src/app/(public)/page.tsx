@@ -1,7 +1,11 @@
 import FirstSection from "@/ui/Home/FirstSection";
 import SecondSection from "@/ui/Home/SecondSection";
 import ThirdSection from "@/ui/Home/ThirdSection";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Home - Shortestify",
+};
 export default function Page() {
   return (
     <main className="bg-indigo-500  text-white flex flex-col ">

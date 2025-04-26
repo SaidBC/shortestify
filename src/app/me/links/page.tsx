@@ -13,6 +13,11 @@ import clientEnv from "@/utils/clientEnv";
 import axios from "axios";
 import { getToken } from "next-auth/jwt";
 import { headers } from "next/headers";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Links",
+};
 
 axios.defaults.baseURL = clientEnv.NEXT_PUBLIC_API_URL;
 

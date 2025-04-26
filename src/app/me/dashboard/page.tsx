@@ -2,6 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MostClickedCountryChart from "@/ui/me/dashboard/MostClickedCountryChart";
 import TopCards from "@/ui/me/dashboard/TopCards";
 import RedirectsDownloadsChart from "@/ui/me/dashboard/RedirectsDownloadsChart";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default function Page() {
   return (

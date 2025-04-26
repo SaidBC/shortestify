@@ -6,7 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import DeleteAccountForm from "@/ui/me/settings/delete/DeleteAccountForm";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Delete Account",
+};
 export default function Page() {
   return (
     <main className="p-4 @container flex items-center justify-center">

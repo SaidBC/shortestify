@@ -1,5 +1,9 @@
 import RatesList from "@/ui/rates/RatesList";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Rates",
+};
 export default function Page() {
   return (
     <main className="pt-18 min-h-dvh">

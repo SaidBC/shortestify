@@ -6,7 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import EmailForm from "@/ui/me/settings/email/EmailForm";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Change Email",
+};
 export default function Page() {
   return (
     <main className="p-4 @container flex items-center justify-center">
