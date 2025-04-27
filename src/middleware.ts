@@ -3,7 +3,7 @@ import { auth } from "./auth";
 import getShortlinkBySlug from "./lib/getShortlinkBySlug";
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { RateLimiterRedis } from "rate-limiter-flexible";
+import { Ratelimit } from "@upstash/ratelimit";
 
 const privateRoutes = [
   "/me/dashboard",
@@ -15,11 +15,9 @@ const privateRoutes = [
 ];
 const authRoutes = ["/auth/login", "/auth/signup"];
 const redis = Redis.fromEnv();
-const rateLimiter = new RateLimiterRedis({
-  storeClient: redis,
-  points: 10,
-  duration: 60,
-  keyPrefix: "api-rate-limit",
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(150, "60 s"),
 });
 
 export default async function middleware(req: NextRequest) {
@@ -34,17 +32,14 @@ export default async function middleware(req: NextRequest) {
           request: ["IP not found"],
         },
       });
-    try {
-      await rateLimiter.consume(ip);
-    } catch (error) {
-      console.log(error);
+    const { success } = await ratelimit.limit(ip as string);
+    if (!success)
       return Response.json({
         success: false,
         errors: {
           request: ["Too many requests"],
         },
       });
-    }
   }
   if (pathname.startsWith("/ads")) {
     const shortSlug = pathname.split("/").at(-1);
