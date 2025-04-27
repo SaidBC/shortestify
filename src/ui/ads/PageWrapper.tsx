@@ -80,12 +80,12 @@ export function PageWrapper({
         </div>
       ) : (
         <div className="flex min-h-screen">
-          <div className="hidden md:flex justify-center md:w-[300px] border-r p-4">
+          <div className="hidden md:block  md:w-[300px] border-r p-4">
             <AdBanner
               apiKey="086ffe158b0dc3707c85dcc3d8c50278"
               width={160}
               height={600}
-              className=" sticky top-18"
+              className="w-fit mx-auto sticky top-18"
               onLoad={handleAdLoad}
             />
           </div>
@@ -108,12 +108,12 @@ export function PageWrapper({
             </div>
           </div>
 
-          <div className="hidden lg:flex justify-center lg:w-[300px] border-l p-4">
+          <div className="hidden lg:block lg:w-[300px] border-l p-4">
             <AdBanner
               apiKey="086ffe158b0dc3707c85dcc3d8c50278"
               width={160}
               height={600}
-              className=" sticky top-18"
+              className="w-fit mx-auto sticky top-18"
               onLoad={handleAdLoad}
             />
           </div>
