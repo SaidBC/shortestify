@@ -37,6 +37,7 @@ export default async function middleware(req: NextRequest) {
     try {
       await rateLimiter.consume(ip);
     } catch (error) {
+      console.log(error);
       return Response.json({
         success: false,
         errors: {
