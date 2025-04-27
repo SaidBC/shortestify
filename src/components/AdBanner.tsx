@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface AdBannerProps {
+  apiKey: string;
   className?: string;
   width?: number;
   height?: number;
@@ -10,6 +11,7 @@ interface AdBannerProps {
 }
 
 export default function AdBanner({
+  apiKey,
   className,
   width = 728,
   height = 90,
@@ -52,7 +54,7 @@ export default function AdBanner({
         optionsScript.type = "text/javascript";
         optionsScript.innerHTML = `
           window.atOptions = {
-            'key': '4c73750420c446c024df0156ae7cc7c2',
+            'key': '${apiKey}',
             'format': 'iframe',
             'height': ${width},
             'width': ${height},
@@ -64,8 +66,7 @@ export default function AdBanner({
         // Create and append the ad script
         const adScript = document.createElement("script");
         adScript.type = "text/javascript";
-        adScript.src =
-          "//www.highperformanceformat.com/4c73750420c446c024df0156ae7cc7c2/invoke.js";
+        adScript.src = `//www.highperformanceformat.com/${apiKey}/invoke.js`;
         adScript.async = true;
 
         let checkInterval: NodeJS.Timeout;
