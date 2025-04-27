@@ -17,8 +17,8 @@ const authRoutes = ["/auth/login", "/auth/signup"];
 const redis = Redis.fromEnv();
 const rateLimiter = new RateLimiterRedis({
   storeClient: redis,
-  points: 10, // 10 requests
-  duration: 60, // per 60 seconds
+  points: 10,
+  duration: 60,
   keyPrefix: "api-rate-limit",
 });
 
@@ -29,6 +29,7 @@ export default async function middleware(req: NextRequest) {
       req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for");
     if (!ip)
       return Response.json({
+        success: false,
         errors: {
           request: ["IP not found"],
         },
@@ -63,5 +64,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
